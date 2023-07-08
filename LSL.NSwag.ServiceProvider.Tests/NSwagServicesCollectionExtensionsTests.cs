@@ -18,7 +18,7 @@ namespace LSL.NSwag.ServiceProvider.Tests
 
             // Act
             serviceCollection
-                .AddHttpClientForNSwagClients(typeof(IClient1).Assembly)
+                .AddHttpClientForNSwagClientsFromAssembly(typeof(IClient1).Assembly)
                 .ConfigureHttpClient(c => c.BaseAddress = expectedBaseUri);
 
             // Assert        
@@ -36,6 +36,34 @@ namespace LSL.NSwag.ServiceProvider.Tests
                 .Should()
                 .Be(expectedBaseUri);                
         }
+
+        [Test]
+        public void GivenAnAssemblyToScanViaAType_ItShouldAddTheAppropriateClients()
+        {
+            // Arange
+            var expectedBaseUri = new Uri("http://test.com");
+            var serviceCollection = new ServiceCollection();
+
+            // Act
+            serviceCollection
+                .AddHttpClientForNSwagClientsFromAssemblyOf<IClient1>()
+                .ConfigureHttpClient(c => c.BaseAddress = expectedBaseUri);
+
+            // Assert        
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            serviceProvider.GetRequiredService<IClient1>()
+                .HttpClient
+                .BaseAddress
+                .Should()
+                .Be(expectedBaseUri);
+
+            serviceProvider.GetRequiredService<IClient2>()
+                .HttpClient
+                .BaseAddress
+                .Should()
+                .Be(expectedBaseUri);                
+        }        
 
         private interface IClient1 : INSwagClient { HttpClient HttpClient { get; } }
         private interface IClient2 : INSwagClient { HttpClient HttpClient { get; } }

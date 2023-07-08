@@ -17,7 +17,7 @@ namespace LSL.NSwag.ServiceProvider
         /// <param name="source">The IServiceCollection to add the clients to</param>
         /// <param name="apiAssembly">The assembly to scan for INSwagClients</param>
         /// <returns></returns>
-        public static IHttpClientBuilder AddHttpClientForNSwagClients(this IServiceCollection source, Assembly apiAssembly)
+        public static IHttpClientBuilder AddHttpClientForNSwagClientsFromAssembly(this IServiceCollection source, Assembly apiAssembly)
         {
             var genericMethod = typeof(HttpClientBuilderExtensions).GetMethods()
                 .Single(m => m.Name == "AddTypedClient" && m.GetGenericArguments().Length == 2);
@@ -43,6 +43,16 @@ namespace LSL.NSwag.ServiceProvider
 
             return httpClientBuilder;
         }
-    }
 
+        /// <summary>
+        /// Adds all NSwag client implementations from the containing assembly of the given generic type
+        /// </summary>
+        /// <param name="source"></param>
+        /// <typeparam name="TClient">A type from the assembly we wish to scan from</typeparam>
+        /// <returns></returns>
+        public static IHttpClientBuilder AddHttpClientForNSwagClientsFromAssemblyOf<TClient>(this IServiceCollection source) where TClient : INSwagClient
+        {
+            return source.AddHttpClientForNSwagClientsFromAssembly(typeof(TClient).Assembly);
+        }
+    }
 }
