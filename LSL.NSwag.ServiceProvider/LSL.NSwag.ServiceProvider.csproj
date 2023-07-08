@@ -22,14 +22,15 @@
     <Authors>alunacjones</Authors>
   </PropertyGroup>
 
-  <ItemGroup>  
+  <ItemGroup>
+    <PackageReference Include="LSL.HttpClients.ServiceProvider" Version="1.0.4" />  
     <PackageReference Include="LSL.NSwag.CommonTypes" Version="1.0.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
   </ItemGroup>
 
   <PropertyGroup>
-      <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
