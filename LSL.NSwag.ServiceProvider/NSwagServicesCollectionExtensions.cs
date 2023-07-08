@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using LSL.NSwag.CommonTypes.Client;
 using Microsoft.Extensions.DependencyInjection;
+using LSL.HttpClients.ServiceProvider;
 
 namespace LSL.NSwag.ServiceProvider
 {
@@ -17,32 +18,27 @@ namespace LSL.NSwag.ServiceProvider
         /// <param name="source">The IServiceCollection to add the clients to</param>
         /// <param name="apiAssembly">The assembly to scan for INSwagClients</param>
         /// <returns></returns>
-        public static IHttpClientBuilder AddHttpClientForNSwagClients(this IServiceCollection source, Assembly apiAssembly)
+        public static IHttpClientBuilder AddHttpClientForNSwagClientsFromAssembly(this IServiceCollection source, Assembly apiAssembly)
         {
-            var genericMethod = typeof(HttpClientBuilderExtensions).GetMethods()
-                .Single(m => m.Name == "AddTypedClient" && m.GetGenericArguments().Length == 2);
-
-            var httpClientBuilder = source.AddHttpClient(apiAssembly.GetName().Name);
-
-            var eligibleTypes = apiAssembly
-                .GetTypes()
-                .Where(t => !t.IsAbstract && typeof(INSwagClient).IsAssignableFrom(t))
-                .Select(t => new { Type = t, EligibleInterface = t.GetInterfaces().First(i => typeof(INSwagClient).IsAssignableFrom(i)) })
-                .Where(t => t.EligibleInterface != null);
-
-            foreach (var type in eligibleTypes)
-            {
-                var @delegate = genericMethod
-                    .MakeGenericMethod(
-                        new[] { type.EligibleInterface, type.Type }
-                    )
-                    .CreateDelegate(typeof(Func<IHttpClientBuilder, IHttpClientBuilder>));
-
-                ((Func<IHttpClientBuilder, IHttpClientBuilder>)@delegate)(httpClientBuilder);
-            }
+            
+            var httpClientBuilder = source.AddHttpClientForClientsFromAssembly(
+                apiAssembly,
+                t => !t.IsAbstract && typeof(INSwagClient).IsAssignableFrom(t),
+                t => t.GetInterfaces().First(i => typeof(INSwagClient).IsAssignableFrom(i))
+            );
 
             return httpClientBuilder;
         }
-    }
 
+        /// <summary>
+        /// Adds all NSwag client implementations from the containing assembly of the given generic type
+        /// </summary>
+        /// <param name="source"></param>
+        /// <typeparam name="TClient">A type from the assembly we wish to scan from (mus</typeparam>
+        /// <returns></returns>
+        public static IHttpClientBuilder AddHttpClientForNSwagClientsFromAssemblyOf<TClient>(this IServiceCollection source) where TClient : INSwagClient
+        {
+            return source.AddHttpClientForNSwagClientsFromAssembly(typeof(TClient).Assembly);
+        }
+    }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using FluentAssertions;
 using LSL.NSwag.CommonTypes.Client;
@@ -18,12 +19,18 @@ namespace LSL.NSwag.ServiceProvider.Tests
 
             // Act
             serviceCollection
-                .AddHttpClientForNSwagClients(typeof(IClient1).Assembly)
+                .AddHttpClientForNSwagClientsFromAssembly(typeof(IClient1).Assembly)
                 .ConfigureHttpClient(c => c.BaseAddress = expectedBaseUri);
 
             // Assert        
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
+            serviceCollection
+                .Where(s => typeof(INSwagClient).IsAssignableFrom(s.ServiceType) || typeof(HttpClient).IsAssignableFrom(s.ServiceType))
+                .Count()
+                .Should()
+                .Be(3, "we have registered one HttpClient and two NSwag clients");
+                
             serviceProvider.GetRequiredService<IClient1>()
                 .HttpClient
                 .BaseAddress
@@ -36,6 +43,40 @@ namespace LSL.NSwag.ServiceProvider.Tests
                 .Should()
                 .Be(expectedBaseUri);                
         }
+
+        [Test]
+        public void GivenAnAssemblyToScanViaAType_ItShouldAddTheAppropriateClients()
+        {
+            // Arange
+            var expectedBaseUri = new Uri("http://test.com");
+            var serviceCollection = new ServiceCollection();
+
+            // Act
+            serviceCollection
+                .AddHttpClientForNSwagClientsFromAssemblyOf<IClient1>()
+                .ConfigureHttpClient(c => c.BaseAddress = expectedBaseUri);
+
+            // Assert        
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            serviceCollection
+                .Where(s => typeof(INSwagClient).IsAssignableFrom(s.ServiceType) || typeof(HttpClient).IsAssignableFrom(s.ServiceType))
+                .Count()
+                .Should()
+                .Be(3, "we have registered one HttpClient and two NSwag clients");
+
+            serviceProvider.GetRequiredService<IClient1>()
+                .HttpClient
+                .BaseAddress
+                .Should()
+                .Be(expectedBaseUri);
+
+            serviceProvider.GetRequiredService<IClient2>()
+                .HttpClient
+                .BaseAddress
+                .Should()
+                .Be(expectedBaseUri);                
+        }        
 
         private interface IClient1 : INSwagClient { HttpClient HttpClient { get; } }
         private interface IClient2 : INSwagClient { HttpClient HttpClient { get; } }
