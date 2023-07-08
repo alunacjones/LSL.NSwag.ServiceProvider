@@ -18,7 +18,7 @@ serviceCollection
     .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://test.com"));
 ```
 
-> **NOTE**: The extensions method returns an `IHttpClientBuilder` so that further configuration can be done (like setting up a common base url in the example above)
+> **NOTE**: The extension methods return an `IHttpClientBuilder` so that further configuration can be done (like setting up a common base url in the preceding example)
 
 The same can be achieved with the generic method too:
 

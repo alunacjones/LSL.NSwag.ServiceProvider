@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using FluentAssertions;
 using LSL.NSwag.CommonTypes.Client;
@@ -24,6 +25,12 @@ namespace LSL.NSwag.ServiceProvider.Tests
             // Assert        
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
+            serviceCollection
+                .Where(s => typeof(INSwagClient).IsAssignableFrom(s.ServiceType) || typeof(HttpClient).IsAssignableFrom(s.ServiceType))
+                .Count()
+                .Should()
+                .Be(3, "we have registered one HttpClient and two NSwag clients");
+                
             serviceProvider.GetRequiredService<IClient1>()
                 .HttpClient
                 .BaseAddress
@@ -51,6 +58,12 @@ namespace LSL.NSwag.ServiceProvider.Tests
 
             // Assert        
             var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            serviceCollection
+                .Where(s => typeof(INSwagClient).IsAssignableFrom(s.ServiceType) || typeof(HttpClient).IsAssignableFrom(s.ServiceType))
+                .Count()
+                .Should()
+                .Be(3, "we have registered one HttpClient and two NSwag clients");
 
             serviceProvider.GetRequiredService<IClient1>()
                 .HttpClient

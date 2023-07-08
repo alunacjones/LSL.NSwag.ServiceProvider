@@ -14,9 +14,9 @@
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <Version>1.0.1</Version>
     <PackageVersion>1.0.1</PackageVersion>
-    <PackageTags></PackageTags>
+    <PackageTags>service-provider;httpclient;http;client;nswag;registration;dependency-injection;service-provider;service;provider</PackageTags>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
-    <PackageDescription>Description here</PackageDescription>
+    <PackageDescription>Quick registration of NSwag clients</PackageDescription>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/alunacjones/LSL.NSwag.ServiceProvider</RepositoryUrl>
     <Authors>alunacjones</Authors>
