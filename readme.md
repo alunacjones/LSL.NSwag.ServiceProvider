@@ -4,4 +4,18 @@
 
 # LSL.NSwag.ServiceProvider
 
-Provide package documentation here.
+Provides a quick mechanism to register NSwag Clients that are based on the `INSwagClient` interface defined in the [LSL.NSwag.CommonTypes](https://www.nuget.org/packages/LSL.NSwag.CommonTypes) NuGet library.
+
+## Quickstart
+
+When registering services the following line can be used to register all NSwag generated clients:
+
+```csharp
+using LSL.NSwag.ServiceProvider;
+...
+serviceCollection
+    .AddHttpClientForNSwagClients(typeof(IClient1).Assembly)
+    .ConfigureHttpClient(c => c.BaseAddress = expectedBaseUri);
+```
+
+> **NOTE**: The extensions method returns an `IHttpClientBuilder` so that further configuration can be done.
