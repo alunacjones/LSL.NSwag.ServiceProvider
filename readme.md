@@ -14,8 +14,18 @@ When registering services the following line can be used to register all NSwag g
 using LSL.NSwag.ServiceProvider;
 ...
 serviceCollection
-    .AddHttpClientForNSwagClients(typeof(IClient1).Assembly)
+    .AddHttpClientForNSwagClientsFromAssembly(typeof(IClient1).Assembly)
     .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://test.com"));
 ```
 
 > **NOTE**: The extensions method returns an `IHttpClientBuilder` so that further configuration can be done (like setting up a common base url in the example above)
+
+The same can be achieved with the generic method too:
+
+```csharp
+using LSL.NSwag.ServiceProvider;
+...
+serviceCollection
+    .AddHttpClientForNSwagClientsFromAssemblyOf<IClient1>()
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://test.com"));
+```
