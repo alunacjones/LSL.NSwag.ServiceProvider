@@ -17,7 +17,8 @@ namespace LSL.NSwag.ServiceProvider
         /// </summary>
         /// <param name="source">The IServiceCollection to add the clients to</param>
         /// <param name="apiAssembly">The assembly to scan for INSwagClients</param>
-        /// <returns></returns>
+        /// <returns>An IHttpClientBuilder to continue with configuration</returns>
+        /// <exception cref="System.ArgumentException">Thrown if no clients could be found<exception>
         public static IHttpClientBuilder AddHttpClientForNSwagClientsFromAssembly(this IServiceCollection source, Assembly apiAssembly)
         {
             
@@ -35,7 +36,8 @@ namespace LSL.NSwag.ServiceProvider
         /// </summary>
         /// <param name="source"></param>
         /// <typeparam name="TClient">A type from the assembly we wish to scan from (mus</typeparam>
-        /// <returns></returns>
+        /// <returns>An IHttpClientBuilder to continue with configuration</returns>
+        /// <exception cref="System.ArgumentException">Thrown if no clients could be found<exception>
         public static IHttpClientBuilder AddHttpClientForNSwagClientsFromAssemblyOf<TClient>(this IServiceCollection source) where TClient : INSwagClient
         {
             return source.AddHttpClientForNSwagClientsFromAssembly(typeof(TClient).Assembly);
